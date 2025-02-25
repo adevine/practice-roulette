@@ -6,65 +6,103 @@
     <title>Practice Roulette</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            background-color: #4caf50;
+            color: white;
+            padding: 20px;
+            margin: 0;
             text-align: center;
-            margin-top: 20px;
         }
         .container {
             width: 80%;
-            margin: auto;
+            margin: 20px auto;
             max-width: 700px;
-            text-align: left;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
         .instructions {
             text-align: center;
+            margin-bottom: 20px;
+            color: #333;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
+            border-radius: 5px;
+            overflow: hidden;
         }
-        th, td {
-            padding: 8px;
+        th {
+            background-color: #f1f1f1;
+            padding: 10px;
+        }
+        td {
+            padding-top: 8px;
+            padding-right: 10px;
             text-align: center;
+            background-color: white;
         }
         input {
             width: 100%;
-            padding: 5px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
         }
         .priority {
-            width: 100%;
+            width: 90%;
         }
         button {
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            transition: background-color 0.3s;
         }
         .delete-btn {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 3px 7px;
+            background-color: #e74c3c;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
         }
         .actions {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .actions button {
+            background-color: #3498db;
+        }
+        .actions button:hover {
+            background-color: #2980b9;
         }
         #result {
             font-size: 1.2em;
             font-weight: bold;
             margin-top: 20px;
             text-align: center;
+            color: #333;
         }
         .add-song-btn {
             width: 100%;
-            cursor: pointer;
-            padding: 5px;
+            padding: 10px;
             background-color: #4caf50;
             color: white;
             border: none;
-            border-radius: 3px;
+            border-radius: 5px;
+        }
+        .add-song-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -76,9 +114,9 @@
         <table id="songTable">
             <thead>
                 <tr>
-                    <th width="60%">Songs</th>
-                    <th width="25%">Practice Priority</th>
-                    <th width="15%"></th>
+                    <th>Song</th>
+                    <th>Practice Priority</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -87,6 +125,8 @@
             <tfoot>
                 <tr>
                     <td><button class="add-song-btn" onclick="addSongRow()">Add Song</button></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>
@@ -148,9 +188,13 @@
             document.getElementById("result").textContent = `You should practice: ${selectedSong}`;
         }
 
+        function getRandomInt(maxExclusive) {
+            return Math.floor(Math.random() * maxExclusive);
+        }
+
         function weightedRandomChoice(items) {
             const weightedList = items.flatMap(item => Array(item.weight).fill(item.name));
-            return weightedList[Math.floor(Math.random() * weightedList.length)];
+            return weightedList[getRandomInt(weightedList.length)];
         }
 
         function saveSongs() {
