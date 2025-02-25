@@ -13,26 +13,26 @@
         .container {
             width: 80%;
             margin: auto;
-            max-width: 500px;
+            max-width: 600px;
             text-align: left;
         }
-        .song-list {
+        table {
             width: 100%;
+            border-collapse: collapse;
             margin-top: 10px;
         }
-        .song-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr auto;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
         }
         input {
+            width: 100%;
             padding: 5px;
+            box-sizing: border-box;
         }
         .priority {
-            width: 60px;
-            text-align: center;
+            width: 80px;
         }
         button {
             cursor: pointer;
@@ -50,13 +50,6 @@
             font-weight: bold;
             margin-top: 20px;
         }
-        .label-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr auto;
-            gap: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -64,13 +57,19 @@
     <div class="container">
         <p>Enter the names of songs you want to practice along with their practice priority (1-100). A higher priority makes a song more likely to be chosen. Click "What should I Practice?" to randomly pick a song based on the priority.</p>
         
-        <div class="song-list" id="songList">
-            <div class="label-row">
-                <span>Song</span>
-                <span>Practice Priority</span>
-                <span></span>
-            </div>
-        </div>
+        <table id="songTable">
+            <thead>
+                <tr>
+                    <th>Song</th>
+                    <th>Practice Priority</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically here -->
+            </tbody>
+        </table>
+        
         <button onclick="addSongRow()">Add Song</button>
         <button onclick="pickSong()">What should I Practice?</button>
         <p id="result"></p>
@@ -88,32 +87,31 @@
         };
 
         function addSongRow(song = "", priority = 1) {
-            const list = document.getElementById("songList");
-            const row = document.createElement("div");
-            row.classList.add("song-row");
+            const tableBody = document.querySelector("#songTable tbody");
+            const row = document.createElement("tr");
 
             row.innerHTML = `
-                <input type="text" placeholder="Song name" value="${song}">
-                <input type="number" class="priority" min="1" max="100" value="${priority}">
-                <button class="delete-btn" onclick="removeSongRow(this)">✖</button>
+                <td><input type="text" placeholder="Song name" value="${song}"></td>
+                <td><input type="number" class="priority" min="1" max="100" value="${priority}"></td>
+                <td><button class="delete-btn" onclick="removeSongRow(this)">✖</button></td>
             `;
 
-            list.appendChild(row);
+            tableBody.appendChild(row);
             saveSongs();
         }
 
         function removeSongRow(button) {
-            button.parentElement.remove();
+            button.closest('tr').remove();
             saveSongs();
         }
 
         function pickSong() {
-            const rows = document.querySelectorAll(".song-row");
+            const rows = document.querySelectorAll("#songTable tbody tr");
             const songs = [];
 
             rows.forEach(row => {
-                const name = row.children[0].value.trim();
-                const priority = parseInt(row.children[1].value, 10);
+                const name = row.children[0].children[0].value.trim();
+                const priority = parseInt(row.children[1].children[0].value, 10);
                 if (name && priority > 0) {
                     songs.push({ name, weight: priority });
                 }
@@ -134,12 +132,12 @@
         }
 
         function saveSongs() {
-            const rows = document.querySelectorAll(".song-row");
+            const rows = document.querySelectorAll("#songTable tbody tr");
             const songs = [];
 
             rows.forEach(row => {
-                const name = row.children[0].value.trim();
-                const priority = parseInt(row.children[1].value, 10);
+                const name = row.children[0].children[0].value.trim();
+                const priority = parseInt(row.children[1].children[0].value, 10);
                 if (name) {
                     songs.push({ name, priority });
                 }
@@ -149,7 +147,7 @@
         }
 
         // Save songs on input change
-        document.getElementById('songList').addEventListener('input', saveSongs);
+        document.querySelector("#songTable tbody").addEventListener('input', saveSongs);
     </script>
 </body>
 </html>
