@@ -10,23 +10,28 @@
             text-align: center;
             margin-top: 20px;
         }
-        .song-list {
+        .container {
             width: 80%;
             margin: auto;
             max-width: 500px;
+            text-align: left;
+        }
+        .song-list {
+            width: 100%;
+            margin-top: 10px;
         }
         .song-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
             align-items: center;
+            gap: 10px;
             margin-bottom: 10px;
         }
         input {
-            width: 60%;
             padding: 5px;
         }
         .priority {
-            width: 20%;
+            width: 100%;
         }
         button {
             cursor: pointer;
@@ -45,27 +50,29 @@
             margin-top: 20px;
         }
         .label-row {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
             font-weight: bold;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Practice Roulette</h1>
-    <p>Enter the names of songs you want to practice along with their practice priority (1-100). A higher priority makes a song more likely to be chosen. Click "What should I Practice?" to randomly pick a song based on the priority.</p>
-    
-    <div class="song-list" id="songList">
-        <div class="label-row">
-            <span>Song</span>
-            <span>Practice Priority</span>
-            <span></span>
+    <div class="container">
+        <p>Enter the names of songs you want to practice along with their practice priority (1-100). A higher priority makes a song more likely to be chosen. Click "What should I Practice?" to randomly pick a song based on the priority.</p>
+        
+        <div class="song-list" id="songList">
+            <div class="label-row">
+                <span>Song</span>
+                <span>Practice Priority</span>
+                <span></span>
+            </div>
         </div>
+        <button onclick="addSongRow()">Add Song</button>
+        <button onclick="pickSong()">What should I Practice?</button>
+        <p id="result"></p>
     </div>
-    <button onclick="addSongRow()">Add Song</button>
-    <button onclick="pickSong()">What should I Practice?</button>
-    <p id="result"></p>
 
     <script>
         // Load songs from localStorage on page load
