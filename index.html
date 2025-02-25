@@ -44,12 +44,24 @@
             font-weight: bold;
             margin-top: 20px;
         }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>Practice Roulette</h1>
+    <p>Enter the names of songs you want to practice along with their practice priority (1-100). A higher priority makes a song more likely to be chosen. Click "What should I Practice?" to randomly pick a song based on the priority.</p>
+    
     <div class="song-list" id="songList">
-        <!-- Song rows will be added dynamically -->
+        <div class="label-row">
+            <span>Song</span>
+            <span>Practice Priority</span>
+            <span></span>
+        </div>
     </div>
     <button onclick="addSongRow()">Add Song</button>
     <button onclick="pickSong()">What should I Practice?</button>
