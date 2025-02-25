@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input {
+      margin: 10px;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello World Web App</h1>
+  <label for="name">Enter your name:</label>
+  <input type="text" id="name" placeholder="Your name">
+  <button id="goButton">Go</button>
+  <p id="greeting"></p>
+
+  <script>
+    document.getElementById('goButton').addEventListener('click', greet);
+
+    function greet() {
+      const name = document.getElementById('name').value;
+      const greeting = name ? `Hello, ${name}!` : 'Hello, stranger!';
+      document.getElementById('greeting').textContent = greeting;
+    }
+  </script>
+</body>
+</html>
