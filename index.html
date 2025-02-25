@@ -1,39 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello World App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    input {
-      margin: 10px;
-    }
-    button {
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Roulette</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .song-list {
+            width: 80%;
+            margin: auto;
+            max-width: 500px;
+        }
+        .song-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        input {
+            width: 60%;
+            padding: 5px;
+        }
+        .priority {
+            width: 20%;
+        }
+        button {
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 3px 7px;
+        }
+        #result {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Hello World Web App</h1>
-  <label for="name">Enter your name:</label>
-  <input type="text" id="name" placeholder="Your name">
-  <button id="goButton">Go</button>
-  <p id="greeting"></p>
+    <h1>Practice Roulette</h1>
+    <div class="song-list" id="songList">
+        <!-- Song rows will be added dynamically -->
+    </div>
+    <button onclick="addSongRow()">Add Song</button>
+    <button onclick="pickSong()">What should I Practice?</button>
+    <p id="result"></p>
 
-  <script>
-    document.getElementById('goButton').addEventListener('click', greet);
+    <script>
+        function addSongRow(song = "", priority = 1) {
+            const list = document.getElementById("songList");
+            const row = document.createElement("div");
+            row.classList.add("song-row");
 
-    function greet() {
-      const name = document.getElementById('name').value;
-      const greeting = name ? `Hello, ${name}!` : 'Hello, stranger!';
-      document.getElementById('greeting').textContent = greeting;
-    }
-  </script>
+            row.innerHTML = `
+                <input type="text" placeholder="Song name" value="${song}">
+                <input type="number" class="priority" min="1" max="100" value="${priority}">
+                <button class="delete-btn" onclick="this.parentElement.remove()">✖</button>
+            `;
+
+            list.appendChild(row);
+        }
+
+        function pickSong() {
+            const rows = document.querySelectorAll(".song-row");
+            const songs = [];
+
+            rows.forEach(row => {
+                const name = row.children[0].value.trim();
+                const priority = parseInt(row.children[1].value, 10);
+                if (name && priority > 0) {
+                    songs.push({ name, weight: priority });
+                }
+            });
+
+            if (songs.length === 0) {
+                document.getElementById("result").textContent = "No songs to choose from!";
+                return;
+            }
+
+            const selectedSong = weightedRandomChoice(songs);
+            document.getElementById("result").textContent = `You should practice: ${selectedSong}`;
+        }
+
+        function weightedRandomChoice(items) {
+            const weightedList = items.flatMap(item => Array(item.weight).fill(item.name));
+            return weightedList[Math.floor(Math.random() * weightedList.length)];
+        }
+
+        // Add an initial blank row
+        addSongRow();
+    </script>
 </body>
 </html>
