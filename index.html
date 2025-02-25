@@ -56,6 +56,16 @@
     <p id="result"></p>
 
     <script>
+        // Load songs from localStorage on page load
+        window.onload = function() {
+            const savedSongs = JSON.parse(localStorage.getItem('songs')) || [];
+            if (savedSongs.length === 0) {
+                addSongRow();
+            } else {
+                savedSongs.forEach(song => addSongRow(song.name, song.priority));
+            }
+        };
+
         function addSongRow(song = "", priority = 1) {
             const list = document.getElementById("songList");
             const row = document.createElement("div");
@@ -64,10 +74,16 @@
             row.innerHTML = `
                 <input type="text" placeholder="Song name" value="${song}">
                 <input type="number" class="priority" min="1" max="100" value="${priority}">
-                <button class="delete-btn" onclick="this.parentElement.remove()">✖</button>
+                <button class="delete-btn" onclick="removeSongRow(this)">✖</button>
             `;
 
             list.appendChild(row);
+            saveSongs();
+        }
+
+        function removeSongRow(button) {
+            button.parentElement.remove();
+            saveSongs();
         }
 
         function pickSong() {
@@ -96,8 +112,23 @@
             return weightedList[Math.floor(Math.random() * weightedList.length)];
         }
 
-        // Add an initial blank row
-        addSongRow();
+        function saveSongs() {
+            const rows = document.querySelectorAll(".song-row");
+            const songs = [];
+
+            rows.forEach(row => {
+                const name = row.children[0].value.trim();
+                const priority = parseInt(row.children[1].value, 10);
+                if (name) {
+                    songs.push({ name, priority });
+                }
+            });
+
+            localStorage.setItem('songs', JSON.stringify(songs));
+        }
+
+        // Save songs on input change
+        document.getElementById('songList').addEventListener('input', saveSongs);
     </script>
 </body>
 </html>
