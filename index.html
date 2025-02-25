@@ -13,8 +13,11 @@
         .container {
             width: 80%;
             margin: auto;
-            max-width: 600px;
+            max-width: 700px;
             text-align: left;
+        }
+        .instructions {
+            text-align: center;
         }
         table {
             width: 100%;
@@ -22,7 +25,6 @@
             margin-top: 10px;
         }
         th, td {
-            border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
         }
@@ -32,12 +34,11 @@
             box-sizing: border-box;
         }
         .priority {
-            width: 80px;
+            width: 100%;
         }
         button {
             cursor: pointer;
             padding: 5px 10px;
-            margin: 5px;
         }
         .delete-btn {
             background-color: red;
@@ -45,33 +46,54 @@
             border: none;
             padding: 3px 7px;
         }
+        .actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
         #result {
             font-size: 1.2em;
             font-weight: bold;
             margin-top: 20px;
+            text-align: center;
+        }
+        .add-song-btn {
+            width: 100%;
+            cursor: pointer;
+            padding: 5px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
     <h1>Practice Roulette</h1>
     <div class="container">
-        <p>Enter the names of songs you want to practice along with their practice priority (1-100). A higher priority makes a song more likely to be chosen. Click "What should I Practice?" to randomly pick a song based on the priority.</p>
+        <p class="instructions">Enter the names of songs you want to practice along with their practice priority (1-100).<br/>A higher priority makes a song more likely to be chosen.<br/>Click "What should I Practice?" to randomly pick a song based on the priority.</p>
         
         <table id="songTable">
             <thead>
                 <tr>
-                    <th>Song</th>
-                    <th>Practice Priority</th>
-                    <th></th>
+                    <th width="60%">Songs</th>
+                    <th width="25%">Practice Priority</th>
+                    <th width="15%"></th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Rows will be added dynamically here -->
             </tbody>
+            <tfoot>
+                <tr>
+                    <td><button class="add-song-btn" onclick="addSongRow()">Add Song</button></td>
+                </tr>
+            </tfoot>
         </table>
         
-        <button onclick="addSongRow()">Add Song</button>
-        <button onclick="pickSong()">What should I Practice?</button>
+        <div class="actions">
+            <button onclick="pickSong()">What should I Practice?</button>
+        </div>
         <p id="result"></p>
     </div>
 
