@@ -235,7 +235,12 @@
         document.querySelector("#songTable tbody").addEventListener('input', saveSongs);
 
         function startPracticeTimer() {
-            const minutes = parseInt(prompt("Enter the number of minutes to practice a song:"), 10);
+            const minutesText = prompt("Enter the number of minutes to practice a song:");
+            if (!minutesText) {
+                // if user clicked cancel minutesText will be null, or if they left the textbox blank just ignore it
+                return
+            }
+            const minutes = parseInt(minutesText.trim(), 10);
             if (isNaN(minutes) || minutes <= 0) {
                 alert("Please enter a valid number of minutes.");
                 return;
