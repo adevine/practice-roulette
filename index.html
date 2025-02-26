@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practice Roulette</title>
+    <link rel="icon" type="image/png" href="/images/favicon-512.png">
     <style>
         body {
             font-family: 'Helvetica Neue', sans-serif;
@@ -76,6 +77,7 @@
         .actions {
             display: flex;
             justify-content: center;
+            gap: 10px;
             margin-top: 10px;
             border-top: 1px solid #ddd;
             padding-top: 10px;
@@ -104,17 +106,27 @@
         .add-song-btn:hover {
             background-color: #45a049;
         }
+        .stop-timer-btn {
+            background-color: #e74c3c;
+        }
+        .stop-timer-btn:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
     <h1>Practice Roulette</h1>
     <div class="container">
-        <p class="instructions">Enter the names of songs you want to practice along with their practice priority (1-100).<br/>A higher priority makes a song more likely to be chosen.<br/>Click "What should I Practice?" to randomly pick a song based on the priority.</p>
+        <p class="instructions">
+            Enter the names of songs you want to practice along with their practice priority (1-100).<br/>
+            A higher priority makes a song more likely to be chosen.<br/>
+            Click "What should I practice now?" to randomly pick a song based on the priority.<br/>
+        </p>
         
         <table id="songTable">
             <thead>
                 <tr>
-                    <th>Song</th>
+                    <th>Songs</th>
                     <th>Practice Priority</th>
                     <th></th>
                 </tr>
@@ -132,13 +144,20 @@
         </table>
         
         <div class="actions">
-            <button onclick="pickSong()">What should I Practice?</button>
+            <button onclick="stopPracticeTimer(); pickSong();">What should I practice now?</button>
+            <button onclick="startPracticeTimer();">Start a practice timer</button>
         </div>
         <p id="result"></p>
+        <div id="timer-controls" style="text-align:center; margin-top:10px;"></div>
     </div>
 
+    <audio id="bellSound" src="/media/bell-notification-933.wav" preload="auto"></audio>
+
     <script>
-        // Load songs from localStorage on page load
+        let practiceTimer = null;
+        let practiceEndTime = null;
+        let selectedSong = "";  
+
         window.onload = function() {
             const savedSongs = JSON.parse(localStorage.getItem('songs')) || [];
             if (savedSongs.length === 0) {
@@ -184,7 +203,7 @@
                 return;
             }
 
-            const selectedSong = weightedRandomChoice(songs);
+            selectedSong = weightedRandomChoice(songs);
             document.getElementById("result").textContent = `You should practice: ${selectedSong}`;
         }
 
@@ -214,6 +233,49 @@
 
         // Save songs on input change
         document.querySelector("#songTable tbody").addEventListener('input', saveSongs);
+
+        function startPracticeTimer() {
+            const minutes = parseInt(prompt("Enter the number of minutes to practice a song:"), 10);
+            if (isNaN(minutes) || minutes <= 0) {
+                alert("Please enter a valid number of minutes.");
+                return;
+            }
+
+            stopPracticeTimer();
+
+            pickSong();
+            practiceEndTime = new Date().getTime() + minutes * 60000;
+            updateCountdown();
+
+            practiceTimer = setInterval(() => {
+                if (new Date().getTime() >= practiceEndTime) {
+                    document.getElementById('bellSound').play();
+                    pickSong();
+                    practiceEndTime = new Date().getTime() + minutes * 60000;
+                }
+                updateCountdown();
+            }, 1000);
+
+            document.getElementById("timer-controls").innerHTML = `<button class="stop-timer-btn" onclick="stopPracticeTimer()">Stop Timer</button>`;
+        }
+
+        function updateCountdown() {
+            const remainingTime = practiceEndTime - new Date().getTime();
+            if (remainingTime > 0) {
+                const minutes = Math.floor(remainingTime / 60000);
+                const seconds = Math.floor((remainingTime % 60000) / 1000);
+                document.getElementById("result").textContent = `You should practice: ${selectedSong} for the next ${minutes > 0 ? `${minutes}:${seconds < 10 ? '0' : ''}${seconds} minutes` : `${seconds} seconds`}`;
+            }
+        }
+
+        function stopPracticeTimer() {
+            if (practiceTimer) {
+                clearInterval(practiceTimer);
+            }
+            practiceTimer = null;
+            document.getElementById("result").textContent = "";
+            document.getElementById("timer-controls").innerHTML = "";
+        }
     </script>
 </body>
 </html>
