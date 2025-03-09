@@ -76,11 +76,20 @@
         }
         .actions {
             display: flex;
-            justify-content: center;
-            gap: 10px;
+            justify-content: space-between; /* Ensures left & right sections align properly */
+            align-items: center;
             margin-top: 10px;
             border-top: 1px solid #ddd;
             padding-top: 10px;
+        }
+        .actions-left {
+            display: flex;
+            justify-content: center; /* Keeps these buttons centered */
+            gap: 10px;
+            flex-grow: 1;
+        }
+        #exportBtn {
+            margin-left: auto; /* Pushes it to the right */
         }
         .actions button {
             background-color: #3498db;
@@ -136,7 +145,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td><button class="add-song-btn" onclick="addSongRow()">Add Song</button></td>
+                    <td><button class="add-song-btn" onclick="addSongRow()">Add song</button></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -144,8 +153,11 @@
         </table>
         
         <div class="actions">
-            <button onclick="stopPracticeTimer(); pickSong();">What should I practice now?</button>
-            <button onclick="startPracticeTimer();">Start a practice timer</button>
+            <div class="actions-left">
+                <button onclick="stopPracticeTimer(); pickSong();">What should I practice now?</button>
+                <button onclick="startPracticeTimer();">Start a practice timer</button>
+            </div>
+            <button id="exportBtn" onclick="exportSongList();">Export list</button>
         </div>
         <p id="result"></p>
         <div id="timer-controls" style="text-align:center; margin-top:10px;"></div>
@@ -159,11 +171,27 @@
         let selectedSong = "";  
 
         window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const songsParam = urlParams.get("songs");
+
+            if (songsParam) {
+                try {
+                    const decodedSongs = JSON.parse(decodeURIComponent(songsParam));
+                    if (Array.isArray(decodedSongs)) {
+                        localStorage.setItem("songs", JSON.stringify(decodedSongs));
+                    }
+                } catch (e) {
+                    console.warn("Invalid song list data in URL.");
+                }
+            }
+
             const savedSongs = JSON.parse(localStorage.getItem('songs')) || [];
             if (savedSongs.length === 0) {
                 addSongRow();
+                toggleExportButtonDisabled(true);
             } else {
                 savedSongs.forEach(song => addSongRow(song.name, song.priority));
+                toggleExportButtonDisabled(false);
             }
         };
 
@@ -229,6 +257,8 @@
             });
 
             localStorage.setItem('songs', JSON.stringify(songs));
+
+            toggleExportButtonDisabled(songs.length === 0);
         }
 
         // Save songs on input change
@@ -280,6 +310,29 @@
             practiceTimer = null;
             document.getElementById("result").textContent = "";
             document.getElementById("timer-controls").innerHTML = "";
+        }
+
+        function exportSongList() {
+            const songs = localStorage.getItem("songs");
+
+            const encodedSongs = encodeURIComponent(songs);
+            const mailtoLink = `mailto:?subject=Your saved song list from Practice Roulette&body=Open this link in a new browser window to transfer your song list: https://adevine.github.io/practice-roulette/?songs=${encodedSongs}`;
+
+            window.location.href = mailtoLink;
+        }
+
+        function toggleExportButtonDisabled(disabled) {
+            const exportButton = document.getElementById("exportBtn");
+            exportButton.disabled = disabled;
+            if (disabled) {
+                exportButton.style.backgroundColor = "#ccc";
+                exportButton.style.cursor = "not-allowed";
+                exportButton.style.color = "#888";
+            } else {
+                exportButton.style.backgroundColor = "#3498db";
+                exportButton.style.cursor = "pointer";
+                exportButton.style.color = "white";
+            }
         }
     </script>
 </body>
