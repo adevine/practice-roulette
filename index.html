@@ -325,7 +325,7 @@
             const encodedSongs = encodeURIComponent(songs);
             const mailtoLink = `mailto:?subject=Your saved song list from Practice Roulette&body=Open this link in a new browser window to transfer your song list:%0A%0Ahttps://adevine.github.io/practice-roulette/?songs=${encodedSongs}`;
 
-            window.location.href = mailtoLink;
+            window.open(mailtoLink, "_blank");
         }
 
         function toggleExportButtonDisabled(disabled) {
