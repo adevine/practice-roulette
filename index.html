@@ -190,12 +190,12 @@
                 addSongRow();
                 toggleExportButtonDisabled(true);
             } else {
-                savedSongs.forEach(song => addSongRow(song.name, song.priority));
+                savedSongs.forEach(song => addSongRow(song.name, song.priority, true /* initial load */));
                 toggleExportButtonDisabled(false);
             }
         };
 
-        function addSongRow(song = "", priority = 1) {
+        function addSongRow(song = "", priority = 1, initialLoad = false) {
             const tableBody = document.querySelector("#songTable tbody");
             const row = document.createElement("tr");
 
@@ -205,10 +205,12 @@
                 <td><button class="delete-btn" onclick="removeSongRow(this)">✖</button></td>
             `;
 
-            // Set focus to the newly added song text box.
+            // Set focus to the newly added song text box if we're NOT doing an initial load from local storage.
             // This works because there is only one input of type text in the newly added row.
             // requestAnimationFrame ensures the DOM updates have been made before we try to set focus.
-            requestAnimationFrame(() => row.querySelector("input[type='text']").focus());
+            if (!initialLoad) {
+                requestAnimationFrame(() => row.querySelector("input[type='text']").focus());
+            }
 
             tableBody.appendChild(row);
             saveSongs();
