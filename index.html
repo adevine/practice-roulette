@@ -205,6 +205,11 @@
                 <td><button class="delete-btn" onclick="removeSongRow(this)">✖</button></td>
             `;
 
+            // Set focus to the newly added song text box.
+            // This works because there is only one input of type text in the newly added row.
+            // requestAnimationFrame ensures the DOM updates have been made before we try to set focus.
+            requestAnimationFrame(() => row.querySelector("input[type='text']").focus());
+
             tableBody.appendChild(row);
             saveSongs();
         }
@@ -316,7 +321,7 @@
             const songs = localStorage.getItem("songs");
 
             const encodedSongs = encodeURIComponent(songs);
-            const mailtoLink = `mailto:?subject=Your saved song list from Practice Roulette&body=Open this link in a new browser window to transfer your song list: https://adevine.github.io/practice-roulette/?songs=${encodedSongs}`;
+            const mailtoLink = `mailto:?subject=Your saved song list from Practice Roulette&body=Open this link in a new browser window to transfer your song list:%0A%0Ahttps://adevine.github.io/practice-roulette/?songs=${encodedSongs}`;
 
             window.location.href = mailtoLink;
         }
